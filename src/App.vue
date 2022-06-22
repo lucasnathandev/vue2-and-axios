@@ -10,7 +10,20 @@
 
     <div class="container">
 
+      <TarefasLista />
+
     </div>
 
   </div>
 </template>
+
+<script>
+
+import TarefasLista from './components/TarefasLista.vue'
+
+export default {
+    components: {
+        TarefasLista
+    }
+}
+</script>
