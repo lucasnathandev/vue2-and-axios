@@ -2,7 +2,7 @@
   <div class="my-4">
     <hr />
     <h2 class="font-weight-light">Salvar Tarefa</h2>
-    <form>
+    <form @submit.prevent="salvar">
       <div class="row">
         <div :class="classeColuna">
           <div class="form-group">
@@ -11,6 +11,7 @@
               type="text"
               class="form-control"
               placeholder="Título da tarefa"
+              v-model="tarefaLocal.titulo"
             />
           </div>
         </div>
@@ -49,6 +50,12 @@ export default {
   computed: {
     classeColuna() {
       return this.tarefa ? "col-sm-10" : "col-sm-12";
+    },
+  },
+  methods: {
+    salvar() {
+      this.$emit("criar", this.tarefaLocal);
+      this.tarefaLocal = { titulo: "", concluido: false };
     },
   },
 };
