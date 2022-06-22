@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "start": "vue-cli-service serve",
-    "vite": "node ./bin/vite"
+    "vite": "node ./bin/vite",
+    "api": "json-server --watch db.json --port 8000"
   },
   "dependencies": {
     "axios": "^0.27.2",

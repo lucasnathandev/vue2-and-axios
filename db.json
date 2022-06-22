@@ -11,14 +11,14 @@
       "concluido": true
     },
     {
-      "id": 3,
-      "titulo": "Aprender Axios",
-      "concluido": false
+      "titulo": "Aprender GET no Axios",
+      "concluido": true,
+      "id": 4
     },
     {
-      "titulo": "Aprender GET no Axios",
+      "titulo": "Aprender VueX",
       "concluido": false,
-      "id": 4
+      "id": 5
     }
   ]
 }

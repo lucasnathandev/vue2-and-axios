@@ -20,12 +20,19 @@
         v-for="tarefa in tarefas"
         :key="tarefa.id"
         :tarefa="tarefa"
+        @editar="selecionarTarefaParaEdicao"
+        @deletar="deletarTarefa"
       />
     </ul>
 
     <p v-else>Nenhuma tarefa criada.</p>
 
-    <TarefaSalvar @criar="criarTarefa" v-if="exibirFormulario" />
+    <TarefaSalvar
+      :tarefa="tarefaSelecionada"
+      @criar="criarTarefa"
+      v-if="exibirFormulario"
+      @editar="editarTarefa"
+    />
   </div>
 </template>
 
@@ -44,20 +51,50 @@ export default {
     return {
       tarefas: [],
       exibirFormulario: false,
+      tarefaSelecionada: undefined,
     };
   },
   created() {
-    axios
-      .get(api.baseURL + "/tarefas")
-      .then((res) => (this.tarefas = res.data));
+    axios.get(api.baseURL + "/tarefas").then((res) => {
+      console.log("GET /tarefas", res);
+      this.tarefas = res.data;
+    });
   },
   methods: {
     criarTarefa(tarefa) {
       axios.post(api.baseURL + "/tarefas", tarefa).then((res) => {
         console.log("POST /tarefas", res);
         this.tarefas.push(res.data);
-        this.exibirFormulario = false;
+        this.resetar();
       });
+    },
+    editarTarefa(tarefa) {
+      axios.put(api.baseURL + "/tarefas/" + tarefa.id, tarefa).then((res) => {
+        console.log("PUT /tarefas" + tarefa.id, res);
+        const index = this.tarefas.findIndex((t) => t.id === tarefa.id);
+        this.tarefas.splice(index, 1, res.data);
+        this.resetar();
+      });
+    },
+    deletarTarefa(tarefa) {
+      const confirmar = window.confirm(
+        "Quer realmente deletar a tarefa:",
+        tarefa.titulo + "?"
+      );
+      if (confirmar)
+        axios.delete(api.baseURL + "/tarefas/" + tarefa.id).then((res) => {
+          console.log("DELETE /tarefas/" + tarefa.id, res);
+          const index = this.tarefas.findIndex((t) => t.id === tarefa.id);
+          this.tarefas.splice(index, 1);
+        });
+    },
+    resetar() {
+      this.tarefaSelecionada = undefined;
+      this.exibirFormulario = false;
+    },
+    selecionarTarefaParaEdicao(tarefa) {
+      this.tarefaSelecionada = tarefa;
+      this.exibirFormulario = true;
     },
   },
 };
