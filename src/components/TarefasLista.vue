@@ -26,7 +26,9 @@
       />
     </ul>
 
-    <p v-else>Nenhuma tarefa criada.</p>
+    <p v-else-if="!mensagemErro">Nenhuma tarefa criada.</p>
+
+    <div class="alert alert-danger" v-else>{{ mensagemErro }}</div>
 
     <TarefaSalvar
       :tarefa="tarefaSelecionada"
@@ -38,8 +40,7 @@
 </template>
 
 <script>
-import { api } from "../config/config.js";
-import axios from "axios";
+import axios from "../axios";
 const TarefaSalvar = () => import("./TarefaSalvar.vue");
 const TarefasListaIten = () => import("./TarefasListaIten.vue");
 
@@ -53,6 +54,7 @@ export default {
       tarefas: [],
       exibirFormulario: false,
       tarefaSelecionada: undefined,
+      mensagemErro: undefined,
     };
   },
   computed: {
@@ -66,34 +68,44 @@ export default {
     },
   },
   created() {
-    axios.get(api.baseURL + "/tarefas").then((res) => {
-      console.log("GET /tarefas", res);
-      this.tarefas = res.data;
-    });
+    axios
+      .get("/tarefas")
+      .then(
+        (res) => {
+          console.log("GET /tarefas", res);
+          this.tarefas = res.data;
+        },
+        (error) => {
+          console.log("Erro capturado no then", error);
+          return Promise.reject(error);
+        }
+      )
+      .catch((error) => {
+        console.log("Erro capturado no catch", error);
+        if (error.response) {
+          this.mensagemErro = `Servidor retornou um erro: ${error.message} ${error.response.statusText}`;
+          console.log("Erro resposta", error.response);
+        } else if (error.request) {
+          this.mensagemErro = `Erro ao tentar comunicar com o servidor: ${error.message}`;
+          console.log("Erro requisição", error.request);
+        } else {
+          this.mensagemErro = `Erro ao fazer requisição ao servidor: ${error.message}`;
+        }
+      })
+      .then((algumaCoisa) => {
+        console.log("Sempre executado!", algumaCoisa);
+      });
   },
   methods: {
     criarTarefa(tarefa) {
-      // axios.post(api.baseURL + "/tarefas", tarefa).then((res) => {
-      // console.log("POST /tarefas", res);
-      // this.tarefas.push(res.data);
-      // this.resetar();
-      // });
-      // Another way to send a HTTP request to an REST API
-      axios
-        .request({
-          baseURL: api.baseURL,
-          url: "/tarefas",
-          method: "post",
-          data: tarefa,
-        })
-        .then((res) => {
-          console.log("POST /tarefas", res);
-          this.tarefas.push(res.data);
-          this.resetar();
-        }).then;
+      axios.post("/tarefas", tarefa).then((res) => {
+        console.log("POST /tarefas", res);
+        this.tarefas.push(res.data);
+        this.resetar();
+      });
     },
     editarTarefa(tarefa) {
-      axios.put(api.baseURL + "/tarefas/" + tarefa.id, tarefa).then((res) => {
+      axios.put("/tarefas/" + tarefa.id, tarefa).then((res) => {
         console.log("PUT /tarefas" + tarefa.id, res);
         const index = this.tarefas.findIndex((t) => t.id === tarefa.id);
         this.tarefas.splice(index, 1, res.data);
@@ -106,7 +118,7 @@ export default {
         tarefa.titulo + "?"
       );
       if (confirmar)
-        axios.delete(api.baseURL + "/tarefas/" + tarefa.id).then((res) => {
+        axios.delete("/tarefas/" + tarefa.id).then((res) => {
           console.log("DELETE /tarefas/" + tarefa.id, res);
           const index = this.tarefas.findIndex((t) => t.id === tarefa.id);
           this.tarefas.splice(index, 1);
