@@ -6,7 +6,7 @@
       </div>
       <div class="col-sm-2">
         <button
-          @click="exibirFormulario = !exibirFormulario"
+          @click="exibirFormCriarTarefa"
           class="btn btn-primary float-right"
         >
           <i class="fa fa-plus mr-2"></i>
@@ -17,11 +17,12 @@
 
     <ul class="list-group" v-if="tarefas.length > 0">
       <TarefasListaIten
-        v-for="tarefa in tarefas"
+        v-for="tarefa in tarefasOrdenadas"
         :key="tarefa.id"
         :tarefa="tarefa"
         @editar="selecionarTarefaParaEdicao"
         @deletar="deletarTarefa"
+        @concluir="editarTarefa"
       />
     </ul>
 
@@ -53,6 +54,16 @@ export default {
       exibirFormulario: false,
       tarefaSelecionada: undefined,
     };
+  },
+  computed: {
+    tarefasOrdenadas() {
+      return Array.from(this.tarefas).sort((t1, t2) => {
+        if (t1.concluido === t2.concluido) {
+          return t1.titulo < t2.titulo ? -1 : t1.titulo > t2.titulo ? 1 : 0;
+        }
+        return t1.concluido - t2.concluido;
+      });
+    },
   },
   created() {
     axios.get(api.baseURL + "/tarefas").then((res) => {
@@ -95,6 +106,13 @@ export default {
     selecionarTarefaParaEdicao(tarefa) {
       this.tarefaSelecionada = tarefa;
       this.exibirFormulario = true;
+    },
+    exibirFormCriarTarefa() {
+      if (this.tarefaSelecionada) {
+        this.tarefaSelecionada = undefined;
+        return;
+      }
+      this.exibirFormulario = !this.exibirFormulario;
     },
   },
 };

@@ -19,6 +19,11 @@
       "titulo": "Aprender VueX",
       "concluido": false,
       "id": 5
+    },
+    {
+      "titulo": "Aprender Axios",
+      "concluido": true,
+      "id": 6
     }
   ]
 }
