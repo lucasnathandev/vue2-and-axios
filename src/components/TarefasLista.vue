@@ -73,11 +73,24 @@ export default {
   },
   methods: {
     criarTarefa(tarefa) {
-      axios.post(api.baseURL + "/tarefas", tarefa).then((res) => {
-        console.log("POST /tarefas", res);
-        this.tarefas.push(res.data);
-        this.resetar();
-      });
+      // axios.post(api.baseURL + "/tarefas", tarefa).then((res) => {
+      // console.log("POST /tarefas", res);
+      // this.tarefas.push(res.data);
+      // this.resetar();
+      // });
+      // Another way to send a HTTP request to an REST API
+      axios
+        .request({
+          baseURL: api.baseURL,
+          url: "/tarefas",
+          method: "post",
+          data: tarefa,
+        })
+        .then((res) => {
+          console.log("POST /tarefas", res);
+          this.tarefas.push(res.data);
+          this.resetar();
+        }).then;
     },
     editarTarefa(tarefa) {
       axios.put(api.baseURL + "/tarefas/" + tarefa.id, tarefa).then((res) => {
