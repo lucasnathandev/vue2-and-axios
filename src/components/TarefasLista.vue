@@ -97,12 +97,22 @@ export default {
       });
   },
   methods: {
-    criarTarefa(tarefa) {
-      axios.post("/tarefas", tarefa).then((res) => {
+    async criarTarefa(tarefa) {
+      /*axios.post("/tarefas", tarefa).then((res) => {
         console.log("POST /tarefas", res);
         this.tarefas.push(res.data);
         this.resetar();
-      });
+      });*/
+      try {
+        const resposta = await axios.post("/tarefas", tarefa);
+        console.log("POST /tarefas", resposta);
+        this.tarefas.push(resposta.data);
+        this.resetar();
+      } catch (error) {
+        console.log("Erro ao criar tarefa", error.message);
+      } finally {
+        console.log("Sempre executado!");
+      }
     },
     editarTarefa(tarefa) {
       axios.put("/tarefas/" + tarefa.id, tarefa).then((res) => {

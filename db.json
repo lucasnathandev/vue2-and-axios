@@ -25,6 +25,18 @@
       "concluido": false,
       "id": 5,
       "curso": "Vue JS"
+    },
+    {
+      "titulo": "Usando Async/Await no Axios",
+      "concluido": true,
+      "curso": "Vue JS",
+      "id": 6
+    },
+    {
+      "titulo": "Aprender Vue-Axios",
+      "concluido": false,
+      "curso": "Vue JS",
+      "id": 7
     }
   ]
 }
